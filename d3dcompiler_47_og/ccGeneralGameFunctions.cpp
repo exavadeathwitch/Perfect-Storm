@@ -256,7 +256,7 @@ std::string GetModMessage()
 
 	// Reserve memory for resulting messages
 	string thanks = hex0x009cffff + "Thank You" + endColor + " for " + hex0x009cffff + "Installing & Playing" + endColor +
-		"\n                " + hex0x8708c3ff + "UNS: Gev!" + endColor + "\n\n";
+		"\n                " + hex0x8708c3ff + "Storm 4 DX" + endColor + "\n\n";
 	string outdated = "      Your game is outdated.\n ";
 	string currentBuild = "           " + hex0xc853ee + "Current Build: v";
 	string yourBuild = "\n             " + hex0x009cffff + "Your Build: v";
@@ -372,14 +372,13 @@ uintptr_t ccGeneralGameFunctions::Hook_MsgToString(uintptr_t MessageToDecode)
 					{
 						if (msg == MessageID[x])
 						{
-							strcpy(result, MessageStr[x].c_str());
-							//result = (char*)(MessageStr[x].c_str());
+							result = (char*)MessageStr[x].c_str();
 						}
 					}
 				}
+				if (msg != (std::string)(char*)MessageToDecode) result = (char*)msg.c_str();
 			}
 		}
-
 		return (uintptr_t)result;
 	}
 	else
@@ -519,7 +518,7 @@ __int64 __fastcall fc_Xfbin_LoadFile(__int64 FilePath)
 	string TestPath = string(ApiPath) + "\\data_win32\\" + ActualFilePath.substr(5, ActualFilePath.length() - 5);
 	cout << "Testing for " << TestPath << endl;
 
-	if (std::experimental::filesystem::exists(TestPath) == true)
+	if (std::filesystem::exists(TestPath) == true)
 	{
 		UnhookLoadXfbin();
 		result = g_Xfbin_LoadFile((__int64)newFilePath.c_str());
@@ -577,7 +576,7 @@ __int64 __fastcall fc_Menu_LoadXfbin(__int64 a1, __int64 FilePath)
 	string TestPath = string(ApiPath) + "\\data\\" + ActualFilePath.substr(5, ActualFilePath.length() - 5);
 	//cout << "Testing for " << TestPath << endl;
 
-	if (std::experimental::filesystem::exists(TestPath) == true)
+	if (std::filesystem::exists(TestPath) == true)
 	{
 		UnhookLoadXfbin2();
 		//result = g_Menu_LoadXfbin(a1, (__int64)newFilePath.c_str());

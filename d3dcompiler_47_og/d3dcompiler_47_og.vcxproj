@@ -22,7 +22,7 @@
     <ProjectGuid>{3941E9F8-2E29-4D69-8717-F74562ED5301}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
     <RootNamespace>d3dcompiler_47_og</RootNamespace>
-    <WindowsTargetPlatformVersion>10.0.17763.0</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
     <ProjectName>d3dcompiler_47</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
@@ -50,7 +50,7 @@
     <UseDebugLibraries>false</UseDebugLibraries>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>NotSet</CharacterSet>
-    <PlatformToolset>v141</PlatformToolset>
+    <PlatformToolset>v142</PlatformToolset>
     <CLRSupport>false</CLRSupport>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
@@ -82,6 +82,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
     <GenerateManifest>false</GenerateManifest>
+    <IncludePath>C:\Users\Ares\Downloads\Perfect_Storm_Source_Code\gevdll\d3dcompiler_47_og\lib\Winx64-visualStudio;C:\Users\Ares\Downloads\Perfect_Storm_Source_Code\gevdll\d3dcompiler_47_og\lib\x64;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -147,6 +148,8 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <ModuleDefinitionFile>d3dcompiler_47_og.def</ModuleDefinitionFile>
+      <AdditionalLibraryDirectories>C:\Users\Ares\Downloads\Perfect_Storm_Source_Code\gevdll\d3dcompiler_47_og\lib\x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>CasualLibrary.lib;Winmm.lib;irrKlang.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -154,11 +157,6 @@
     <ClCompile Include="BoxCollider.cpp" />
     <ClCompile Include="c1CMN.cpp" />
     <ClCompile Include="API_Console.cpp" />
-    <ClCompile Include="c2DNZ.cpp" />
-    <ClCompile Include="c2ITC.cpp" />
-    <ClCompile Include="c2MDR.cpp" />
-    <ClCompile Include="c2TOB.cpp" />
-    <ClCompile Include="c3MNT.cpp" />
     <ClCompile Include="ccBattleFunctions.cpp" />
     <ClCompile Include="ccBattleInputs.cpp" />
     <ClCompile Include="ccCharacterFunctions.cpp" />
@@ -225,6 +223,7 @@
     <MASM Include="d3dcompiler_47_og_asm.asm">
       <FileType>Document</FileType>
     </MASM>
+    <None Include="lib\Winx64-visualStudio\irrKlang.exp" />
     <None Include="lua\src\Makefile" />
   </ItemGroup>
   <ItemGroup>
@@ -252,9 +251,31 @@
     <ClInclude Include="Entity_Fireball.h" />
     <ClInclude Include="GameObject.h" />
     <ClInclude Include="HookFunctions.h" />
+    <ClInclude Include="ik_ESoundEngineOptions.h" />
+    <ClInclude Include="ik_ESoundOutputDrivers.h" />
+    <ClInclude Include="ik_EStreamModes.h" />
+    <ClInclude Include="ik_IAudioRecorder.h" />
+    <ClInclude Include="ik_IAudioStream.h" />
+    <ClInclude Include="ik_IAudioStreamLoader.h" />
+    <ClInclude Include="ik_IFileFactory.h" />
+    <ClInclude Include="ik_IFileReader.h" />
+    <ClInclude Include="ik_IRefCounted.h" />
+    <ClInclude Include="ik_irrKlangTypes.h" />
+    <ClInclude Include="ik_ISound.h" />
+    <ClInclude Include="ik_ISoundDeviceList.h" />
+    <ClInclude Include="ik_ISoundEffectControl.h" />
+    <ClInclude Include="ik_ISoundEngine.h" />
+    <ClInclude Include="ik_ISoundMixedOutputReceiver.h" />
+    <ClInclude Include="ik_ISoundSource.h" />
+    <ClInclude Include="ik_ISoundStopEventReceiver.h" />
+    <ClInclude Include="ik_IVirtualRefCounted.h" />
+    <ClInclude Include="ik_SAudioStreamFormat.h" />
+    <ClInclude Include="ik_vec3d.h" />
+    <ClInclude Include="Initialize Sound.h" />
     <ClInclude Include="Input.h" />
     <ClInclude Include="InteractiveMain.h" />
     <ClInclude Include="Interactive_Examine.h" />
+    <ClInclude Include="irrKlang.h" />
     <ClInclude Include="LuaHook.h" />
     <ClInclude Include="LuaHook_Commands.h" />
     <ClInclude Include="lua\src\lapi.h" />
@@ -280,6 +301,7 @@
     <ClInclude Include="lua\src\lundump.h" />
     <ClInclude Include="lua\src\lvm.h" />
     <ClInclude Include="lua\src\lzio.h" />
+    <ClInclude Include="Memory.h" />
     <ClInclude Include="MultiMatch.h" />
     <ClInclude Include="Rigidbody.h" />
     <ClInclude Include="Scene.h" />
@@ -288,6 +310,10 @@
     <ClInclude Include="Vector3.h" />
     <ClInclude Include="WorldCollision.h" />
     <ClInclude Include="ztRpgMain.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <Library Include="lib\Winx64-visualStudio\irrKlang.lib" />
+    <Library Include="lib\x64\CasualLibrary.lib" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -1,21 +1,22 @@
 #include <windows.h>
 #include <stdio.h>
+#include <conio.h>
 #include <string>
 #include <vector>
 #include <iostream>
-
+#include <mmsystem.h>
 #include "API_Console.h"
-
 #include "ccMain.h"
 #include "d3dcompiler_47_og.h"
 #include "ccGeneralGameFunctions.h"
 #include "ccCharacterFunctions.h"
 #include "ccBossIAFunctions.h"
 #include "HookFunctions.h"
-
+#pragma comment(lib, "winmm.lib")
 using namespace std;
 using namespace moddingApi;
-
+#include "irrKlang.h"
+using namespace irrklang;
 // Console Functions
 vector<string> consoleCommands;
 vector<uintptr_t> consoleFunctions;
@@ -47,6 +48,7 @@ void c_ccGroupBattleEventCameraMoveLookBegin();
 void c_ccGetGpPtr();
 void c_ccMultiMatchShowPlayerStatus();
 void c_ccGetCastPointer();
+void c_SoundTest();
 
 void API_Console::InitializeConsole()
 {
@@ -68,6 +70,7 @@ void API_Console::InitializeConsole()
 	AddCommand("ccGetGpPtr", (uintptr_t)c_ccGetGpPtr, 0);
 	AddCommand("ccMultiMatchShowPlayerStatus", (uintptr_t)c_ccMultiMatchShowPlayerStatus, 0);*/
 	AddCommand("GetCastPointer", (uintptr_t)c_ccGetCastPointer, 1);
+	AddCommand("SoundTest", (uintptr_t)c_SoundTest, 0);
 
 	//cout << std::hex << (d3dcompiler_47_og::moduleBase + 0x1653688) << endl;
 }
@@ -102,6 +105,24 @@ void c_ConvertMessage()
 	char * param1_c = strcpy(new char[param1.length() + 1], param1.c_str());
 
 	cout << ccGeneralGameFunctions::MessageToString(param1_c);
+}
+
+void c_SoundTest()
+{
+			// start the sound engine with default parameters
+		ISoundEngine* engine = createIrrKlangDevice();
+
+		if (!engine)
+		{
+			cout << 0;
+		}
+		  // play some sound stream, looped
+		engine->play2D("mywavsound.wav", true);
+
+		char i = 0;
+		std::cin >> i; // wait for user to press some key
+
+		engine->drop(); // delete engine
 }
 
 void c_GetVersionNumber()

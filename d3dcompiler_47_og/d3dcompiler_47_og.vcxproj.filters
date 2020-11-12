@@ -106,6 +106,15 @@
     <Filter Include="Source Files\Player\Characters\Story">
       <UniqueIdentifier>{021d81d1-c41c-4f6d-953d-8a175699be00}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\CasualGamer">
+      <UniqueIdentifier>{71ec0b92-301b-4f6c-a75b-86248a9dc2b8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Sound">
+      <UniqueIdentifier>{02ccb9d9-80f5-4feb-a11e-d28f1daf8fb3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\irrKlang">
+      <UniqueIdentifier>{d18fe0fa-227f-4f02-9e7f-ec448e9193fc}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="MultiMatch.cpp">
@@ -300,21 +309,6 @@
     <ClCompile Include="ccBattleInputs.cpp">
       <Filter>Source Files\General</Filter>
     </ClCompile>
-    <ClCompile Include="c2TOB.cpp">
-      <Filter>Source Files\Player\Characters\2</Filter>
-    </ClCompile>
-    <ClCompile Include="c2DNZ.cpp">
-      <Filter>Source Files\Player\Characters\2</Filter>
-    </ClCompile>
-    <ClCompile Include="c2ITC.cpp">
-      <Filter>Source Files\Player\Characters\2</Filter>
-    </ClCompile>
-    <ClCompile Include="c2MDR.cpp">
-      <Filter>Source Files\Player\Characters\2</Filter>
-    </ClCompile>
-    <ClCompile Include="c3MNT.cpp">
-      <Filter>Source Files\Player\Characters\3</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="MultiMatch.h">
@@ -497,6 +491,75 @@
     <ClInclude Include="c3MNT.h">
       <Filter>Header Files\Player\Characters\3</Filter>
     </ClInclude>
+    <ClInclude Include="Memory.h">
+      <Filter>Header Files\CasualGamer</Filter>
+    </ClInclude>
+    <ClInclude Include="ik_ESoundEngineOptions.h">
+      <Filter>Header Files\irrKlang</Filter>
+    </ClInclude>
+    <ClInclude Include="ik_ESoundOutputDrivers.h">
+      <Filter>Header Files\irrKlang</Filter>
+    </ClInclude>
+    <ClInclude Include="ik_EStreamModes.h">
+      <Filter>Header Files\irrKlang</Filter>
+    </ClInclude>
+    <ClInclude Include="ik_IAudioRecorder.h">
+      <Filter>Header Files\irrKlang</Filter>
+    </ClInclude>
+    <ClInclude Include="ik_IAudioStream.h">
+      <Filter>Header Files\irrKlang</Filter>
+    </ClInclude>
+    <ClInclude Include="ik_IAudioStreamLoader.h">
+      <Filter>Header Files\irrKlang</Filter>
+    </ClInclude>
+    <ClInclude Include="ik_IFileFactory.h">
+      <Filter>Header Files\irrKlang</Filter>
+    </ClInclude>
+    <ClInclude Include="ik_IFileReader.h">
+      <Filter>Header Files\irrKlang</Filter>
+    </ClInclude>
+    <ClInclude Include="ik_IRefCounted.h">
+      <Filter>Header Files\irrKlang</Filter>
+    </ClInclude>
+    <ClInclude Include="ik_irrKlangTypes.h">
+      <Filter>Header Files\irrKlang</Filter>
+    </ClInclude>
+    <ClInclude Include="ik_ISound.h">
+      <Filter>Header Files\irrKlang</Filter>
+    </ClInclude>
+    <ClInclude Include="ik_ISoundDeviceList.h">
+      <Filter>Header Files\irrKlang</Filter>
+    </ClInclude>
+    <ClInclude Include="ik_ISoundEffectControl.h">
+      <Filter>Header Files\irrKlang</Filter>
+    </ClInclude>
+    <ClInclude Include="ik_ISoundEngine.h">
+      <Filter>Header Files\irrKlang</Filter>
+    </ClInclude>
+    <ClInclude Include="ik_ISoundMixedOutputReceiver.h">
+      <Filter>Header Files\irrKlang</Filter>
+    </ClInclude>
+    <ClInclude Include="ik_ISoundSource.h">
+      <Filter>Header Files\irrKlang</Filter>
+    </ClInclude>
+    <ClInclude Include="ik_ISoundStopEventReceiver.h">
+      <Filter>Header Files\irrKlang</Filter>
+    </ClInclude>
+    <ClInclude Include="ik_IVirtualRefCounted.h">
+      <Filter>Header Files\irrKlang</Filter>
+    </ClInclude>
+    <ClInclude Include="ik_SAudioStreamFormat.h">
+      <Filter>Header Files\irrKlang</Filter>
+    </ClInclude>
+    <ClInclude Include="ik_vec3d.h">
+      <Filter>Header Files\irrKlang</Filter>
+    </ClInclude>
+    <ClInclude Include="irrKlang.h">
+      <Filter>Header Files\irrKlang</Filter>
+    </ClInclude>
+    <ClInclude Include="Initialize Sound.h">
+      <Filter>Header Files\Sound</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="d3dcompiler_47_og.def">
@@ -505,10 +568,21 @@
     <None Include="lua\src\Makefile">
       <Filter>Lua</Filter>
     </None>
+    <None Include="lib\Winx64-visualStudio\irrKlang.exp">
+      <Filter>Header Files\irrKlang</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <MASM Include="d3dcompiler_47_og_asm.asm">
       <Filter>Resource Files</Filter>
     </MASM>
+  </ItemGroup>
+  <ItemGroup>
+    <Library Include="lib\x64\CasualLibrary.lib">
+      <Filter>Header Files\CasualGamer</Filter>
+    </Library>
+    <Library Include="lib\Winx64-visualStudio\irrKlang.lib">
+      <Filter>Header Files\irrKlang</Filter>
+    </Library>
   </ItemGroup>
 </Project>

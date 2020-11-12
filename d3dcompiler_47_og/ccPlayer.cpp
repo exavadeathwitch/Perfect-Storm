@@ -21,6 +21,9 @@
 #include "LuaHook_Commands.h"
 #include "ccBattleInputs.h"
 #pragma endregion
+
+#include "Memory.h"
+#include <mmsystem.h>
 #pragma region Character Imports
 // 1
 #include "c1CMN.h"
@@ -272,11 +275,23 @@
 using namespace std;
 using namespace moddingApi;
 
+//Cancel Variables
+float ACDStartup = 60;
+
 int prevFrame = 0;
 int prevBattle = 0;
 ccBattleInputs* inputState;
+int timeflag = 0;
+int support1timeflag = 0;
+int support2timeflag = 0;
+int timer = 3000;
+int support1timer = 3000;
+int support2timer = 3000;
 
 
+int stageNumber;
+int soundNumber;
+int stageselectedNumber;
 void ccPlayer::Start()
 {
 	// Currently this function does nothing.
@@ -285,6 +300,14 @@ void ccPlayer::Start()
 // This function is ran every frame all the time. 
 void ccPlayer::Loop()
 {
+	/*External::Memory memory = External::Memory("NSUNS4.exe");
+	uintptr_t baseAddr = memory.getModule("NSUNS4.exe");
+	uintptr_t stageAddr = memory.getAddress(baseAddr + 0x016BC888, { 0x90,0x128,0x50,0x18 });
+	uintptr_t stageselectedAddr = stageAddr + 4;
+
+	stageNumber = memory.read<int>(stageAddr);
+	int stageselectedNumber = memory.read<int>(stageselectedAddr);
+	*/
 	//cout << "GetModuleHandle(0): " << hex << int(GetModuleHandle(NULL)) << endl << "Module Base: " << hex << int(d3dcompiler_47_og::moduleBase) << endl << endl;
 	// Get keyboard keys and update their state. This is useful for using keyboard hooks, like pressing a key to do a certain function.
 
@@ -299,6 +322,7 @@ void ccPlayer::Loop()
 			// Code for when we quit a battle
 			for (int x = 0; x < 2; x++)
 			{
+				cout << "Quit Battle" << endl;
 				if (plMain[x] != 0)
 				{
 					DeleteCharacter(plMainId[x], x);
@@ -310,6 +334,15 @@ void ccPlayer::Loop()
 			// Code for when we enter a battle
 			for (int x = 0; x < 2; x++)
 			{
+				cout << "Entered Battle" << endl;
+				if (stageNumber == 48 && stageselectedNumber == 1)
+				{
+					if (x == 0)
+					{
+						cout << "Sound Played" << endl;
+						PlaySound(TEXT("mywavsound.wav"), NULL, SND_ASYNC);
+					}
+				}
 				uintptr_t s = GetPlayerStatus(x);
 				uintptr_t p = GetPlayerInfo(x);
 				uintptr_t es = GetPlayerStatus(1 - x);
@@ -330,10 +363,15 @@ void ccPlayer::Loop()
 
 	// If we're not in a battle, stop the code
 	if (ccGameProperties::isOnBattle() == 0) return;
-
 	// This is the loop code for every player.
 	for (int x = 0; x < 2; x++)
 	{
+		cout << "2 Match Began" << endl;
+		if (stageNumber == 48)
+		{
+			cout << "Test";
+			PlaySound(TEXT("mywavsound.wav"), NULL, SND_FILENAME | SND_ASYNC);
+		}
 		// Get player x info
 		uintptr_t s = GetPlayerStatus(x);
 		uintptr_t p = GetPlayerInfo(x);
@@ -349,6 +387,17 @@ void ccPlayer::Loop()
 		uintptr_t es = GetPlayerStatus(1 - x);
 		uintptr_t ep = GetPlayerInfo(1 - x);
 
+		// Get Support Info
+		uintptr_t ss1 = GetPlayerStatus(2 - x);
+		uintptr_t sp1 = GetPlayerInfo(2 - x);
+		uintptr_t ss2 = GetPlayerStatus(4 - x);
+		uintptr_t sp2 = GetPlayerInfo(4 - x);
+		uintptr_t ess1 = GetPlayerStatus(3 - x);
+		uintptr_t esp1 = GetPlayerInfo(3 - x);
+		uintptr_t ess2 = GetPlayerStatus(5 - x);
+		uintptr_t esp2 = GetPlayerInfo(5 - x);
+
+		// Sub Support Info
 
 		// If pointers are null, stop the function.
 		if (s == 0 || p == 0) return;
@@ -357,10 +406,132 @@ void ccPlayer::Loop()
 		float h = GetPlayerFloatProperty(p, s, "health");
 		if (h <= 0) return; // If the health is 0 or less than 0, stop the code.
 
+		//Stage Test
+
 		// This disables armor break
 		if (GetPlayerFloatProperty(p, s, "armor") < 45.0f) { SetPlayerFloatProperty(p, s, "armor", 45.0f); }
 		if (GetPlayerFloatProperty(ep, es, "armor") < 45.0f) { SetPlayerFloatProperty(ep, es, "armor", 45.0f); }
+		if (GetPlayerFloatProperty(sp1, ss1, "armor") < 45.0f) { SetPlayerFloatProperty(sp1, ss1, "armor", 45.0f); }
+		if (GetPlayerFloatProperty(esp1, ess1, "armor") < 45.0f) { SetPlayerFloatProperty(esp1, ess1, "armor", 45.0f); }
+		if (GetPlayerFloatProperty(sp2, ss2, "armor") < 45.0f) { SetPlayerFloatProperty(sp2, ss2, "armor", 45.0f); }
+		if (GetPlayerFloatProperty(esp2, ess2, "armor") < 45.0f) { SetPlayerFloatProperty(esp2, ess2, "armor", 45.0f); }
 
+		//Combo Properties on Tilt
+		if (GetPlayerIntProperty(p, s, "pstate") == 66) { SetPlayerIntProperty(p, s, "pstate", 63); }
+		if (GetPlayerIntProperty(ep, es, "pstate") == 66) { SetPlayerIntProperty(ep, es, "pstate", 63); }
+		if (GetPlayerIntProperty(sp1, ss1, "pstate") == 66) { SetPlayerIntProperty(sp1, ss1, "pstate", 63); }
+		//Enemy
+		if (GetPlayerIntProperty(esp1, ess1, "pstate") == 66) { SetPlayerIntProperty(esp1, ess1, "pstate", 63); }
+		if (GetPlayerIntProperty(sp2, ss2, "pstate") == 66) { SetPlayerIntProperty(sp2, ss2, "pstate", 63); }
+		if (GetPlayerIntProperty(esp2, ess2, "pstate") == 66) { SetPlayerIntProperty(esp2, ess2, "pstate", 63); }
+
+		//Better Air Dash
+		if ((GetPlayerIntProperty(p, s, "pstate") == 16) && (GetPlayerIntProperty(p, s, "attackid") == 37)) { SetPlayerFloatProperty(p, s, "anmspeed", ACDStartup); }
+		if (GetPlayerIntProperty(p, s, "attackid") == 38) { SetPlayerFloatProperty(p, s, "anmspeed", 1.0f); }
+		if ((GetPlayerIntProperty(sp1, ss1, "pstate") == 16) && (GetPlayerIntProperty(sp1, ss1, "attackid") == 37)) { SetPlayerFloatProperty(sp1, ss1, "anmspeed", ACDStartup); }
+		if (GetPlayerIntProperty(sp1, ss1, "attackid") == 38) { SetPlayerFloatProperty(sp1, ss1, "anmspeed", 1.0f); }
+		if ((GetPlayerIntProperty(sp2, ss2, "pstate") == 16) && (GetPlayerIntProperty(sp2, ss2, "attackid") == 37)) { SetPlayerFloatProperty(sp2, ss2, "anmspeed", ACDStartup); }
+		if (GetPlayerIntProperty(sp2, ss2, "attackid") == 38) { SetPlayerFloatProperty(sp2, ss2, "anmspeed", 1.0f); }
+
+		//Enemy
+		if ((GetPlayerIntProperty(ep, es, "pstate") == 16) && (GetPlayerIntProperty(ep, es, "attackid") == 37)) { SetPlayerFloatProperty(ep, es, "anmspeed", ACDStartup); }
+		if (GetPlayerIntProperty(ep, es, "attackid") == 38) { SetPlayerFloatProperty(ep, es, "anmspeed", 1.0f); }
+		if ((GetPlayerIntProperty(esp1, ess1, "pstate") == 16) && (GetPlayerIntProperty(esp1, ess1, "attackid") == 37)) { SetPlayerFloatProperty(esp1, ess1, "anmspeed", ACDStartup); }
+		if (GetPlayerIntProperty(esp1, ess1, "attackid") == 38) { SetPlayerFloatProperty(esp1, ess1, "anmspeed", 1.0f); }
+		if ((GetPlayerIntProperty(esp2, ess2, "pstate") == 16) && (GetPlayerIntProperty(esp2, ess2, "attackid") == 37)) { SetPlayerFloatProperty(esp2, ess2, "anmspeed", ACDStartup); }
+		if (GetPlayerIntProperty(esp2, ess2, "attackid") == 38) { SetPlayerFloatProperty(esp2, ess2, "anmspeed", 1.0f); }
+
+		//Cover Fire
+		if ((GetPlayerIntProperty(p, s, "pstate") == 67) && (GetPlayerIntProperty(p, s, "attackid") == 151) && (GetPlayerIntProperty(p, s, "prevpstate") == 214)) { SetPlayerIntProperty(p, s, "npstate", 70); SetPlayerIntProperty(p, s, "pstateflag", 1); }
+		if ((GetPlayerIntProperty(p, s, "pstate") == 68) && (GetPlayerIntProperty(p, s, "attackid") == 171) && (GetPlayerIntProperty(p, s, "prevpstate") == 214)) { SetPlayerIntProperty(p, s, "npstate", 71); SetPlayerIntProperty(p, s, "pstateflag", 1); }
+		if ((GetPlayerIntProperty(sp1, ss1, "pstate") == 67) && (GetPlayerIntProperty(sp1, ss1, "attackid") == 151) && (GetPlayerIntProperty(sp1, ss1, "prevpstate") == 214)) { SetPlayerIntProperty(sp1, ss1, "npstate", 70); SetPlayerIntProperty(sp1, ss1, "pstateflag", 1); }
+		if ((GetPlayerIntProperty(sp1, ss1, "pstate") == 68) && (GetPlayerIntProperty(sp1, ss1, "attackid") == 171) && (GetPlayerIntProperty(sp1, ss1, "prevpstate") == 214)) { SetPlayerIntProperty(sp1, ss1, "npstate", 71); SetPlayerIntProperty(sp1, ss1, "pstateflag", 1); }
+		if ((GetPlayerIntProperty(sp2, ss2, "pstate") == 67) && (GetPlayerIntProperty(sp2, ss2, "attackid") == 151) && (GetPlayerIntProperty(sp2, ss2, "prevpstate") == 214)) { SetPlayerIntProperty(sp2, ss2, "npstate", 70); SetPlayerIntProperty(sp2, ss2, "pstateflag", 1); }
+		if ((GetPlayerIntProperty(sp2, ss2, "pstate") == 68) && (GetPlayerIntProperty(sp2, ss2, "attackid") == 171) && (GetPlayerIntProperty(sp2, ss2, "prevpstate") == 214)) { SetPlayerIntProperty(sp2, ss2, "npstate", 71); SetPlayerIntProperty(sp2, ss2, "pstateflag", 1); }
+		//Enemy
+		if ((GetPlayerIntProperty(ep, es, "pstate") == 67) && (GetPlayerIntProperty(ep, es, "attackid") == 151) && (GetPlayerIntProperty(ep, es, "prevpstate") == 214)) { SetPlayerIntProperty(ep, es, "npstate", 70); SetPlayerIntProperty(ep, es, "pstateflag", 1); }
+		if ((GetPlayerIntProperty(ep, es, "pstate") == 68) && (GetPlayerIntProperty(ep, es, "attackid") == 171) && (GetPlayerIntProperty(ep, es, "prevpstate") == 214)) { SetPlayerIntProperty(ep, es, "npstate", 71); SetPlayerIntProperty(ep, es, "pstateflag", 1); }
+		if ((GetPlayerIntProperty(esp1, ess1, "pstate") == 67) && (GetPlayerIntProperty(esp1, ess1, "attackid") == 151) && (GetPlayerIntProperty(esp1, ess1, "prevpstate") == 214)) { SetPlayerIntProperty(esp1, ess1, "npstate", 70); SetPlayerIntProperty(esp1, ess1, "pstateflag", 1); }
+		if ((GetPlayerIntProperty(esp1, ess1, "pstate") == 68) && (GetPlayerIntProperty(esp1, ess1, "attackid") == 171) && (GetPlayerIntProperty(esp1, ess1, "prevpstate") == 214)) { SetPlayerIntProperty(esp1, ess1, "npstate", 71); SetPlayerIntProperty(esp1, ess1, "pstateflag", 1); }
+		if ((GetPlayerIntProperty(esp2, ess2, "pstate") == 67) && (GetPlayerIntProperty(esp2, ess2, "attackid") == 151) && (GetPlayerIntProperty(esp2, ess2, "prevpstate") == 214)) { SetPlayerIntProperty(esp2, ess2, "npstate", 70); SetPlayerIntProperty(esp2, ess2, "pstateflag", 1); }
+		if ((GetPlayerIntProperty(esp2, ess2, "pstate") == 68) && (GetPlayerIntProperty(esp2, ess2, "attackid") == 171) && (GetPlayerIntProperty(esp2, ess2, "prevpstate") == 214)) { SetPlayerIntProperty(esp2, ess2, "npstate", 71); SetPlayerIntProperty(esp2, ess2, "pstateflag", 1); }
+		//"Support Health"
+		
+
+
+		/*
+		//Sub Test Code
+		float sub = GetPlayerFloatProperty(p, s, "sub");
+		float support1sub = GetPlayerFloatProperty(sp1, ss1, "sub");
+		float support2sub = GetPlayerFloatProperty(sp2, ss2, "sub");
+		cout << "Flag: " << timeflag << endl;
+		if (GetPlayerIntProperty(p, s, "pstate") == 109 && timeflag == 0 || GetPlayerIntProperty(p, s, "pstate") == 117 && timeflag == 0)
+		{
+			timeflag++;
+			timer = 3000;
+		}
+		if (GetPlayerIntProperty(p, s, "pstate") == 109 || GetPlayerIntProperty(p, s, "pstate") == 117)
+		{
+			timer = 3000;
+		}
+		if (GetPlayerIntProperty(sp1, ss1, "pstate") == 109 && timeflag == 0 || GetPlayerIntProperty(sp1, ss1, "pstate") == 117 && timeflag == 0)
+		{
+			//support1timeflag++;
+			//support1timer = 3000;
+			timeflag++;
+			timer = 3000;
+		}
+		if (GetPlayerIntProperty(sp1, ss1, "pstate") == 109 || GetPlayerIntProperty(sp1, ss1, "pstate") == 117)
+		{
+			//support1timer = 3000;
+			timer = 3000;
+		}
+		if (GetPlayerIntProperty(sp2, ss2, "pstate") == 109 && timeflag == 0 || GetPlayerIntProperty(sp2, ss2, "pstate") == 117 && timeflag == 0)
+		{
+			//support2timeflag++;
+			//support2timer = 3000;
+			timeflag++;
+			timer = 3000;
+		}
+		if (GetPlayerIntProperty(sp2, ss2, "pstate") == 109 || GetPlayerIntProperty(sp2, ss2, "pstate") == 117)
+		{
+			//support2timer = 3000;
+			timer = 3000;
+		}
+		if (timeflag != 0)
+		{
+			if (timer != 0) timer--;
+			cout << "Timer: " << timer << endl;
+ 			SetPlayerFloatProperty(p, s, "maxsub", sub);
+			if (timer == 0)
+			{
+				timeflag = 0;
+			}
+		}
+		/*if (support1timeflag != 0)
+		{
+			if (support1timer != 0) support1timer--;
+			cout << "Support1Timer: " << support1timer << endl;
+			SetPlayerFloatProperty(sp1, ss1, "maxsub", support1sub);
+			SetPlayerFloatProperty(sp1, ss1, "health", h - 0.02f);
+			if (support1timer == 0)
+			{
+				support1timeflag = 0;
+			}
+		}
+		if (support2timeflag != 0)
+		{
+			if (support2timer != 0) support2timer--;
+			cout << "Support2Timer: " << support2timer << endl;
+			SetPlayerFloatProperty(sp2, ss2, "maxsub", support2sub);
+			SetPlayerFloatProperty(sp2, ss2, "health", h - 0.02f);
+			if (support2timer == 0)
+			{
+				support2timeflag = 0;
+			}
+		}*/
+		
+		if (timer == 0) { SetPlayerFloatProperty(p, s, "maxsub", 100.0f); }
 		// Custom player code in here
 		if (ccGameProperties::isOnMenu() == false && prevFrame != ccGeneralGameFunctions::GetCurrentFrame()) {
 			DoCharacterLoop(GetPlayerIntProperty(p, s, "characode"), x);
@@ -635,6 +806,9 @@ string ccPlayer::charcode2str(int charcode) {
 	case 0xE4: return "8tmr";
 	case 0xE5: return "8sai";
 	case 0xE6: return "8aem";
+	case 0xE7: return "rskr";
+	case 0xE8: return "3ssy";
+	case 0xE9: return "2lar";
 	}
 }
 void ccPlayer::SetTimerValue(int timerValue, int maxTimer, bool value) {
@@ -682,11 +856,17 @@ uintptr_t ccPlayer::GetPlayerStatus(int n)
 	// Depending on whether "n" is set to 1 or not will change which offsets we use
 	switch (n)
 	{
+		// Player 2
 		case 1: offsets = { mb_offset, 0x20, 0x90 }; break;
+		// Player 1 Support 1
 		case 2: offsets = { mb_offset, 0x20, 0x08 }; break;
+		// Player 2 Support 1
 		case 3: offsets = { mb_offset, 0x20, 0x98 }; break;
+		// Player 1 Support 2
 		case 4: offsets = { mb_offset, 0x20, 0x10 }; break;
+		// Player 2 Support 2
 		case 5: offsets = { mb_offset, 0x20, 0xA0 }; break;
+		// Player 1
 		default: offsets = { mb_offset, 0x20, 0x00 }; break;
 	}
 	// Execute memory copy/verification functionalities
@@ -731,13 +911,13 @@ float* ccPlayer::GetPlayerFloatPointer(uintptr_t p, uintptr_t s, char* prop)
 		case ccPlayer::str2int("chakra"): result = (float*)(s + 0x08); break;
 		case ccPlayer::str2int("maxchakra"): result = (float*)(s + 0x0C); break;
 		case ccPlayer::str2int("sub"): result = (float*)(s + 0x10); break;
-		case ccPlayer::str2int("maxsub"): result = (float*)(s + 0x10); break;
+		case ccPlayer::str2int("maxsub"): result = (float*)(s + 0x14); break;
 		case ccPlayer::str2int("armor"): result = (float*)(s + 0x20); break;
 		case ccPlayer::str2int("maxarmor"): result = (float*)(s + 0x24); break;
 		case ccPlayer::str2int("gravity"): result = (float*)(p + 0xE8); break;
 		case ccPlayer::str2int("zmomentum"): result = (float*)(p + 0xEC); break;
 		case ccPlayer::str2int("modelscale"): result = (float*)(p + 0x190); break;
-		case ccPlayer::str2int("anmspeed"): result = (float*)(p + 0x1A0); break;
+		case ccPlayer::str2int("anmspeed"): result = (float*)(p + 0x1020); break;
 		case ccPlayer::str2int("movespeed"): result = (float*)(p + 0x14104); break;
 		case ccPlayer::str2int("guard"): result = (float*)(p + 0x149F0); break;
 		case ccPlayer::str2int("maxguard"): result = (float*)(p + 0x149F4); break;

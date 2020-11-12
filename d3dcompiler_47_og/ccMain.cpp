@@ -15,7 +15,7 @@
 #include "ccBossIAFunctions.h"
 #include "HookFunctions.h"
 #include "ccPlayer.h"
-
+#include "Memory.h"
 using namespace moddingApi;
 using namespace std;
 using namespace std::experimental;
@@ -30,7 +30,9 @@ DWORD WINAPI ccMain::Main()
 {
 	// Read all the mods and configs
 	ccMain::ReadApiFiles();
-
+	//Establishes Memory
+	External::Memory memory = External::Memory("NSUNS4.exe");
+	cout << "Memory Established";
 	// Initialize the function hooks
 	HookFunctions::InitializeHooks();
 
@@ -132,7 +134,7 @@ void ccMain::ReadApiFiles()
 	GetCurrentDirectory(_MAX_PATH, ApiPath);
 	int ActualLength = strlen(ApiPath);
 
-	strcat(ApiPath, "\\gev_files\\");
+	strcat(ApiPath, "\\moddingapi\\");
 
 	char ConfigPath[_MAX_PATH];
 	strcpy(ConfigPath, ApiPath);
@@ -176,7 +178,7 @@ void ccMain::ReadApiFiles()
 		// Start reading mods
 		strcat(ApiPath, "mods\\");
 
-		for (const auto & entry : std::experimental::filesystem::directory_iterator(ApiPath))
+		for (const auto & entry : std::filesystem::directory_iterator(ApiPath))
 		{
 			std::string s = entry.path().string();
 
@@ -191,7 +193,7 @@ void ccMain::ReadApiFiles()
 
 			//cout << InfoPath << endl;
 
-			if (std::experimental::filesystem::exists(InfoPath) == true)
+			if (std::filesystem::exists(InfoPath) == true)
 			{
 				BYTE actual = 0;
 				string modName;
@@ -229,7 +231,7 @@ void ccMain::ReadApiFiles()
 				{
 					// Start reading mod files
 					vector<string> files;
-					for (const auto & f : std::experimental::filesystem::directory_iterator(ModPath))
+					for (const auto & f : std::filesystem::directory_iterator(ModPath))
 					{
 						string _file = f.path().string();
 						string _ext = _file.substr(_file.length() - 4, 4);
@@ -294,7 +296,7 @@ void ccMain::ReloadParamFiles()
 	GetCurrentDirectory(_MAX_PATH, ApiPath);
 	int ActualLength = strlen(ApiPath);
 
-	strcat(ApiPath, "\\gev_files\\");
+	strcat(ApiPath, "\\moddingapi\\");
 
 	char ConfigPath[_MAX_PATH];
 	strcpy(ConfigPath, ApiPath);
@@ -308,7 +310,7 @@ void ccMain::ReloadParamFiles()
 	ccCharacterFunctions::c_specialCondCodes.clear();
 	ccCharacterFunctions::c_specialCondFunct.clear();
 
-	for (const auto & entry : std::experimental::filesystem::directory_iterator(ApiPath))
+	for (const auto & entry : std::filesystem::directory_iterator(ApiPath))
 	{
 		std::string s = entry.path().string();
 
@@ -323,7 +325,7 @@ void ccMain::ReloadParamFiles()
 
 		//cout << InfoPath << endl;
 
-		if (std::experimental::filesystem::exists(InfoPath) == true)
+		if (std::filesystem::exists(InfoPath) == true)
 		{
 			BYTE actual = 0;
 			string modName;
@@ -363,7 +365,7 @@ void ccMain::ReloadParamFiles()
 			{
 				// Start reading mod files
 				vector<string> files;
-				for (const auto & f : std::experimental::filesystem::directory_iterator(ModPath))
+				for (const auto & f : std::filesystem::directory_iterator(ModPath))
 				{
 					string _file = f.path().string();
 					string _ext = _file.substr(_file.length() - 4, 4);
